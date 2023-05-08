@@ -19,6 +19,13 @@ logout.addEventListener("click", () => {
 const contenedorGeneralDeAutos = document.getElementById("contenedorGeneralDeAutos")
 let carrito = [];
 
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("carrito")) {
+        carrito = JSON.parse(localStorage.getItem("carrito"))
+        actualizarCarrito()
+    }
+})
+
 const carritoContenedor = document.getElementById("carritoContenedor")
 
 // En esta parte recorremos el array y creamos una card para cada objeto //
@@ -27,8 +34,7 @@ listaAutos.forEach((autosEnVenta) => {
     let contenedorAutos = document.createElement("div");
     contenedorAutos.className = "cardAutos";
     contenedorAutos.innerHTML = `
-    <h2 class="eliminarProducto"> X </h2>
-    <img src="${autosEnVenta.img}">
+    <img class="img-fluid" src="${autosEnVenta.img}">
     <h3>Nombre : ${autosEnVenta.nombre}</h3>
     <h3>Caracteristicas : ${autosEnVenta.caracteristicas}</h3>
     <p>Precio : ${autosEnVenta.precio}</p>
@@ -43,6 +49,7 @@ listaAutos.forEach((autosEnVenta) => {
         precioTotal.innerText = carrito.reduce((acc, prod) => acc + prod.precio, 0)
 
 
+
     })
 
 })
@@ -54,26 +61,28 @@ const botonCarrito = document.getElementById("verCarrito")
 const contadorCarrito = document.getElementById("contadorCarrito")
 const precioTotal = document.getElementById("precioTotal")
 
-botonCarrito.addEventListener("click", () => {
 
+botonCarrito.addEventListener("click", () => {
     actualizarCarrito()
     console.log(carrito)
 
 
 })
 
+
+
 const agregarAlCarrito = (autoId) => {
     const autoSeleccionado = listaAutos.find((auto) => auto.id === autoId)
     carrito.push(autoSeleccionado)
-
-
 
 }
 
 const eliminarDelCarrito = (autoId) => {
     const autoParaEliminar = carrito.find((auto) => auto.id === autoId)
     const indice = carrito.indexOf(autoParaEliminar)
+    localStorage.removeItem("carrito")
     carrito.splice(indice, 1)
+
     actualizarCarrito()
 
 
@@ -94,7 +103,13 @@ const actualizarCarrito = () => {
         `
         carritoContenedor.append(divCarrito)
 
+        localStorage.setItem("carrito", JSON.stringify(carrito))
+
+
+
     })
+
+
 
     contadorCarrito.innerText = carrito.length
     precioTotal.innerText = carrito.reduce((acc, prod) => acc + prod.precio, 0)
